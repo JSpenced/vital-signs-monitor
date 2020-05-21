@@ -1,0 +1,45 @@
+service: vital-signs
+
+# app and org for use with dashboard.serverless.com
+app: vital-signs-app
+org: jeffspencerd
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  deploymentBucket:
+    name : vital-signs-monitor
+  cfnRole: arn:aws:iam::789983606855:user/Jeff
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+        - "s3:GetObject"
+      Resource: "arn:aws:s3:::vital-signs-monitor/model/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+      Resource: "arn:aws:s3:::vital-signs-monitor/data/*"
+# you can overwrite defaults here
+#  region: us-east-1
+
+functions:
+  monitor:
+    handler: src/predict.lambda_handler
+    package:
+      include:
+        - src/utils.py
+        - src/config.py
+        - src/predict.py
+    events :
+      - http : POST /monitor
+
+plugins:
+  - serverless-python-requirements
+custom:
+ pythonRequirements:
+  slim : true
+  noDeploy:
+    - boto3
