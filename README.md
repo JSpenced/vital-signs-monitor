@@ -1,13 +1,13 @@
 # Vital Signs Monitor Deployment
 
-Machine Learning model prediction and streaming api for monitoring health signals using AWS. The model is deployed using Serverless to generate AWS Lambda functions that are callable via the AWS API Gateway. The functions return a prediction if the users vitals are abnormal and dumps all the data into S3 buckets for later analysis or re-training of the models.
+Machine Learning prediction and streaming api for monitoring health signals using AWS. The model is deployed using Serverless to generate AWS Lambda functions that are callable via the AWS API Gateway. The functions return a prediction if the users vitals are abnormal and dumps all the data into S3 buckets for later analysis or re-training of the models.
 
 ## Train Model
 
 This will train a model for each user and save it into a S3 bucket.
 
 ### Set Up Project
-
+If you don't have conda installed, then you can use your virtual environment of choice or your systems python (if python3 is installed).
 
 ```sh
 cd vital-signs-monitor
