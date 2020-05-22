@@ -13,8 +13,17 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "s3:*"
-      Resource: "*"
+        - "s3:GetObject"
+        - "s3:GetObjectAcl"
+        - "s3:GetObjectVersion"
+      Resource: "arn:aws:s3:::vital-signs-monitor/model/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+        - "s3:DeleteObject"
+        - "s3:DeleteObjectVersion"
+      Resource: "arn:aws:s3:::vital-signs-monitor/data/*"
 
 functions:
   mon:
@@ -35,16 +44,5 @@ custom:
   noDeploy:
     - boto3
 
-#   iamRoleStatements:
-#     - Effect: "Allow"
-#       Action:
-#         - "s3:ListBucket"
-#         - "s3:GetObject"
-#       Resource: "arn:aws:s3:::vital-signs-monitor/model/*"
-#     - Effect: "Allow"
-#       Action:
-#         - "s3:PutObject"
-#         - "s3:PutObjectAcl"
-#       Resource: "arn:aws:s3:::vital-signs-monitor/data/*"
 # # you can overwrite defaults here
 #  region: us-east-1
