@@ -2,7 +2,7 @@ import boto3
 import joblib
 from botocore.exceptions import ClientError
 from sklearn.base import BaseEstimator
-from config import BUCKET_NAME, MODEL_EXTENSION, MODEL_FILENAME
+from src.config import BUCKET_NAME, MODEL_EXTENSION, MODEL_FILENAME
 
 
 def upload_model_to_s3(model: BaseEstimator, user: int, local_path='/tmp/') -> bool:

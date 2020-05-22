@@ -1,12 +1,15 @@
 import json
 import numpy as np
 from sklearn.base import BaseEstimator
-from utils import get_data_from_str, get_outlier_model, save_data_to_s3
+from src.utils import get_data_from_str, get_outlier_model, save_data_to_s3
 
 
 def lambda_handler(event, context):
     """Lambda handler to ingest data, make prediction, and return prediction to client.
     """
+    response = {"statusCode": 200,
+                "headers": {
+                    "Content-Type": "application/json"}}
 
     # Amazon API Gateway wraps input into a dictionary as the body
     # and local invocation uses raw input and does not wrap it
@@ -14,13 +17,6 @@ def lambda_handler(event, context):
         data = get_data_from_str(event['body'])
     else:
         data = get_data_from_str(event)
-
-    response = {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json",
-        }
-    }
 
     if not data:
         response['body'] = json.dumps("Malformed data input.")
