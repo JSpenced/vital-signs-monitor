@@ -5,20 +5,21 @@ from sklearn.base import BaseEstimator
 from src.config import BUCKET_NAME, MODEL_EXTENSION, MODEL_FILENAME
 
 
-def upload_model_to_s3(model: BaseEstimator, user: int, local_path='/tmp/') -> bool:
+def upload_model_to_s3(model: BaseEstimator, user: int, local_path='/tmp/', profile='default') -> bool:
     """Upload model file to S3 and save locally in `local_path`.
 
     Returns:
     True if successfully uploaded the file or False if a ClientError occurred.
     """
 
-    S3 = boto3.client('s3')
+    dev = boto3.session.Session(profile_name=profile)
+    S3 = dev.client('s3')
     bucket = BUCKET_NAME
     filename = MODEL_FILENAME + str(user) + MODEL_EXTENSION
     local_filename = local_path + filename
     model_filename = 'model/' + filename
     joblib.dump(model, local_filename)
-    return upload_file_to_s3(local_filename, bucket, model_filename)
+    return upload_file_to_s3(local_filename, bucket, model_filename, S3)
 
 
 def upload_file_to_s3(local_filename, bucket, model_filename, S3=boto3.client('s3')) -> bool:
