@@ -1,7 +1,7 @@
 import json
 import numpy as np
 from sklearn.base import BaseEstimator
-from src.utils import get_data_from_str, get_outlier_model, save_data_to_s3
+from src.utils import get_data_from_str, get_outlier_model, save_data_to_s3, get_scaler
 
 
 def lambda_handler(event, context):
@@ -24,26 +24,30 @@ def lambda_handler(event, context):
 
     save_success = save_data_to_s3(data)
     model = get_outlier_model(data['user_id'])
+    scaler = get_scaler(data['user_id'])
 
-    if model:
+    if model and scaler:
         if data['hr'] == -1 and data['rr'] == -1:
             response['body'] = json.dumps(-10)
         else:
-            pred = predict(model, np.array([data['hr'], data['rr']]))
+            scaled_data = scaler.transform(
+                np.array([data['hr'], data['rr']]).reshape(1, -1))
+            pred = predict(model, scaled_data)
             response['body'] = json.dumps(pred)
     else:
-        response['body'] = json.dumps("Model not retrieved from S3 successfully.")
+        response['body'] = json.dumps(
+            "Model or scaler not retrieved from S3 successfully.")
 
     return response
 
 
 def predict(model: BaseEstimator, sample: list) -> int:
-    """Make a prediction taken from a Json event body.
+    """Make a prediction.
 
     Returns:
     A -1 indicating an outlier or 1 indicating a normal value.
     """
 
     # Need to reshape a single sample because input needs to be 2d
-    result = model.predict(sample.reshape(1, -1))
+    result = model.predict(sample)
     return int(result[0])
