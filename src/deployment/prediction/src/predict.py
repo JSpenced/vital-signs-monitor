@@ -26,8 +26,11 @@ def lambda_handler(event, context):
     model = get_outlier_model(data['user_id'])
 
     if model:
-        pred = predict(model, np.array([data['hr'], data['rr']]))
-        response['body'] = json.dumps(pred)
+        if data['hr'] == -1 and data['rr'] == -1:
+            response['body'] = json.dumps(-10)
+        else:
+            pred = predict(model, np.array([data['hr'], data['rr']]))
+            response['body'] = json.dumps(pred)
     else:
         response['body'] = json.dumps("Model not retrieved from S3 successfully.")
 
