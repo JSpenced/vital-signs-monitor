@@ -61,18 +61,21 @@ def save_data_to_s3(data, bucket=BUCKET_NAME, S3=boto3.resource('s3')) -> bool:
     Returns:
     True if successfully uploaded the file or False if an error occurred.
     """
-    date_path = extract_date_path(data[-1])
-    file_path = extract_file_path(data[-1]) + '.csv'
-    full_path = 'data/' + str(data[0]) + '/' + date_path + file_path
+    date_path = extract_date_path(data['ts'])
+    file_path = extract_file_path(data['ts']) + '.csv'
+    full_path = 'data/' + str(data['user_id']) + '/' + date_path + file_path
     return upload_text_to_s3(stringify_list(data), bucket, full_path, S3)
 
 
 def extract_date_path(string: str) -> str:
+    """Get date path from time string field."""
     # user/year/month/day/hour/
     return string.replace('-','/').replace(' ', '/').replace(':', '/')[:-5]
 
+
 def extract_file_path(string: str) -> str:
-    # user/year/month/day/hour/
+    """Get file path from time string field."""
+    # minute_second
     return string.replace(':','_')[-5:]
 
 
