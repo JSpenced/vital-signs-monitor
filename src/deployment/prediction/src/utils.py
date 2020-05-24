@@ -88,16 +88,17 @@ def get_data_from_str(string: str) -> list:
 
     """
 
+    data_dict = {}
     split_vals = string.split(',')
     if len(split_vals) != 5:
-        return []
+        return data_dict
 
-    user_id = int(split_vals[0])
-    hr = float(split_vals[1])
-    rr = float(split_vals[2])
-    inroom = bool(int(split_vals[3]))
-    ts = split_vals[4]
-    return [user_id, hr, rr, inroom, ts]
+    data_dict['user_id'] = int(split_vals[0])
+    data_dict['hr'] = float(split_vals[1])
+    data_dict['rr'] = float(split_vals[2])
+    data_dict['inroom'] = bool(int(split_vals[3]))
+    data_dict['ts'] = split_vals[4]
+    return data_dict
 
 
 def get_outlier_model(user: int) -> BaseEstimator:

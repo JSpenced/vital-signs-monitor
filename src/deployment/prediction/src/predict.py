@@ -23,10 +23,10 @@ def lambda_handler(event, context):
         return response
 
     save_success = save_data_to_s3(data)
-    model = get_outlier_model(data[0])
+    model = get_outlier_model(data['user_id'])
 
     if model:
-        pred = predict(model, np.array(data[1:3]))
+        pred = predict(model, np.array([data['hr'], data['rr']]))
         response['body'] = json.dumps(pred)
     else:
         response['body'] = json.dumps("Model not retrieved from S3 successfully.")
