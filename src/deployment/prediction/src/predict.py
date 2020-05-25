@@ -7,9 +7,8 @@ from src.utils import get_data_from_str, get_outlier_model, save_data_to_s3, get
 def lambda_handler(event, context):
     """Lambda handler to ingest data, make prediction, and return prediction to client.
     """
-    response = {"statusCode": 200,
-                "headers": {
-                    "Content-Type": "application/json"}}
+    response = {"headers": {
+        "Content-Type": "application/json"}}
 
     # Amazon API Gateway wraps input into a dictionary as the body
     # and local invocation uses raw input and does not wrap it
@@ -19,6 +18,7 @@ def lambda_handler(event, context):
         data = get_data_from_str(event)
 
     if not data:
+        response['statusCode'] = 400
         response['body'] = json.dumps("Malformed data input.")
         return response
 
@@ -27,6 +27,7 @@ def lambda_handler(event, context):
     scaler = get_scaler(data['user_id'])
 
     if model and scaler:
+        response['statusCode'] = 200
         if data['hr'] == -1 and data['rr'] == -1:
             response['body'] = json.dumps(-10)
         else:
@@ -35,6 +36,7 @@ def lambda_handler(event, context):
             pred = predict(model, scaled_data)
             response['body'] = json.dumps(pred)
     else:
+        response['statusCode'] = 404
         response['body'] = json.dumps(
             "Model or scaler not retrieved from S3 successfully.")
 
