@@ -8,6 +8,9 @@ provider:
   name: aws
   runtime: python3.8
   profile: tellus
+  memorySize: 256
+  reservedConcurrency: 200
+  # disableLogs: true
   deploymentBucket:
     name : vital-signs-monitor
   iamRoleStatements:
@@ -43,6 +46,3 @@ custom:
   slim : true
   noDeploy:
     - boto3
-
-# # you can overwrite defaults here
-#  region: us-east-1
