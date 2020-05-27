@@ -71,13 +71,13 @@ def save_data_to_s3(data, bucket=BUCKET_NAME, S3=boto3.resource('s3')) -> bool:
 def extract_date_path(string: str) -> str:
     """Get date path from time string field."""
     # user/year/month/day/hour/
-    return string.replace('-','/').replace(' ', '/').replace(':', '/')[:-5]
+    return string.replace('-', '/').replace(' ', '/').replace(':', '/')[:-5]
 
 
 def extract_file_path(string: str) -> str:
     """Get file path from time string field."""
     # minute_second
-    return string.replace(':','_')[-5:]
+    return string.replace(':', '_')[-5:]
 
 
 def stringify_list(data: list) -> str:
@@ -118,6 +118,7 @@ def get_outlier_model(user: int) -> BaseEstimator:
     local_filename = '/tmp/' + filename
     if download_from_S3(bucket, s3_filepath, local_filename):
         return joblib.load(local_filename)
+    return None
 
 
 def get_scaler(user: int) -> BaseEstimator:
@@ -133,6 +134,7 @@ def get_scaler(user: int) -> BaseEstimator:
     local_filename = '/tmp/' + filename
     if download_from_S3(bucket, s3_filepath, local_filename):
         return joblib.load(local_filename)
+    return None
 
 
 def download_from_S3(bucket, s3_filename, local_filename, S3=boto3.client('s3')) -> str:
